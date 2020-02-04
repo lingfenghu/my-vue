@@ -8,14 +8,25 @@ export default new Router({
   mode: 'history',//去除路径/#！/
   routes: [
     {
-      path: '/',
+      path: '/index',
       name: 'index',
-      component: () => import('../components/Index.vue')
+      component: () => import('../components/Index.vue'),
+      children:[
+        {
+          path: '/fileupload',
+          name: 'fileupload',
+          component: () => import('../views/FileUpload.vue')
+        },
+        {
+          path: '/filedownload',
+          name: 'filedownload',
+          component: () => import('../views/FileDownload.vue')
+        }
+      ]
     },
     {
-      path: '/file',
-      name: 'file',
-      component: () => import('../views/File.vue')
+      path: '/', redirect: '/index'
     },
+    
   ]
 })
