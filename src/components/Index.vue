@@ -12,16 +12,19 @@
                 <i class="el-icon-document"></i>
                 <span>文档操作</span>
               </template>
-                <el-menu-item index="1-1"><i class="el-icon-upload2"></i>文档上传</el-menu-item>
-                <el-menu-item index="1-2"><i class="el-icon-download"></i>文档获取</el-menu-item>
+              <el-menu-item index="1-1"><i class="el-icon-upload2"></i>文档上传</el-menu-item>
+              <el-menu-item index="1-2"><i class="el-icon-download"></i>文档获取</el-menu-item>
             </el-submenu>
+            <el-menu-item index="2">
+              <i class="el-icon-s-data"></i>
+              <span slot="title">日志管理</span>
+            </el-menu-item>
           </el-menu>
         </el-aside>
         <el-container>
             <el-header>
               <el-breadcrumb separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item v-for="item in crumbs" :to="item.name">{{item.text}}</el-breadcrumb-item>
-                <!-- <el-breadcrumb-item :to="{ path: 'fileupload' }">{{currentPage}}</el-breadcrumb-item> -->
               </el-breadcrumb>
             </el-header>
             <el-main>
@@ -33,6 +36,8 @@
 </template>
 
 <script>
+// 控制台报错NavigationDuplicated
+// https://www.cnblogs.com/rever/p/11577322.html
 export default {
   name: 'index',
   data(){
@@ -44,7 +49,7 @@ export default {
         currentItem: {},
         menuItems:[
           {
-            name: 'index',//要跳转的路由名称
+            name: 'home',//要跳转的路由名称
             text: '首页',
             index: '0'
           },
@@ -63,6 +68,11 @@ export default {
                 index: '1-2'
               }
             ]
+          },
+          {
+            name: 'logsanalyze',
+            text: '日志管理',
+            index: '2'
           }
         ],
       }
@@ -131,7 +141,7 @@ export default {
   watch: {
     //监听下一个跳转的路径名称
     $route(to) {
-      console.log(to.name)
+      // console.log(to.name)
       if(to.name === this.currentItem.name){
         return this.$route.name === name
       }
@@ -142,21 +152,26 @@ export default {
 
 <style>
 .el-header{
-    background-color: white;
+    background-color: rgb(100, 180, 250);
     color: black;
     line-height: 50px;
   }
   .el-aside {
-    background-color: #E9EEF3;
-    color: rgb(117, 114, 114);
+    background-color: rgb(100, 180, 250);
+    /* color: rgb(117, 114, 114); */
     text-align: center;
     line-height:700px;
   }
+  .el-menu{
+    color: rgb(117, 114, 114);
+  }
   .el-main {
-    background-color: rgb(190, 194, 199);
-    color: #333;
+    padding: 0px;
+    margin: 0px;
+    background-color: rgb(240, 240, 240);
+    color: black;
     text-align: center;
-    line-height: 650px;
+    height: 690px;
   }
   .el-breadcrumb{
     margin-top: 20px;

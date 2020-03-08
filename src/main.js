@@ -14,6 +14,15 @@ Vue.use(VueAxios, axios)
 
 Vue.config.productionTip = false
 
+// 设置基础URL
+axios.defaults.baseURL = '/api'
+// 设置请求超时时间 3s
+axios.defaults.timeout = 3000
+// 设置axios请求头
+axios.defaults.headers.common['Content-Type'] = 'application/json;charset=UTF-8'
+//axios默认不发送cookie,每次请求都是新的会话
+axios.defaults.withCredentials=true
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

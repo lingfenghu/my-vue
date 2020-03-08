@@ -13,6 +13,18 @@ export default new Router({
       component: () => import('../components/Index.vue'),
       children:[
         {
+          path: '/home',
+          name: 'home',
+          component: () => import('../views/Home.vue'),
+        }
+      ]
+    },
+    {
+      path: '/index',
+      name: 'index',
+      component: () => import('../components/Index.vue'),
+      children:[
+        {
           path: '/fileupload',
           name: 'fileupload',
           component: () => import('../views/FileUpload.vue')
@@ -27,6 +39,17 @@ export default new Router({
     {
       path: '/', redirect: '/index'
     },
-    
+    {
+      path: '/index',
+      name: 'index',
+      component: () => import('../components/Index.vue'),
+      children:[
+        {
+          path: '/logsanalyze',
+          name: 'logsanalyze',
+          component: () => import('../views/LogsAnalyze.vue'),
+        }
+      ]
+    }
   ]
 })
