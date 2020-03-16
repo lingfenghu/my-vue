@@ -1,35 +1,82 @@
 <template>
-  <div class="page">
-    <el-upload
-      drag
-      ref="upload"
-      action="/api/file_upload"
-      :before-upload="beforeUpload"
-      :on-change="handleChange"
-      :on-success="uploadedSuccess"
-      :on-error="uploadError"
-      :on-progress="handleProgress"
-      :file-list="fileList"
-      :multiple="false"
-      :auto-upload="false"
-      :show-file-list="false"
-      :disabled="isSelected"
-      accept=".txt">
-        <i v-if="!isSelected" class="el-icon-upload show-icon"><div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div></i>
-        <i v-else class="el-icon-document show-icon">
-          <div class="el-upload__text">{{this.file.name}}</div>
-        </i>
-        <el-progress v-if="isSelected" :percentage="percent" :status="uploadStatus"></el-progress>
-      <div class="el-upload__tip" slot="tip">只能上传文本格式的文档.txt文件，且不超过10Mb</div>
-    </el-upload>
-    <div class="buttons">
-      <el-col :span="12">
-        <el-button size="small" type="warning" @click="handleRemove()" :disabled="!isSelected">删除该文件</el-button>
-      </el-col>
-      <el-col :span="12">
-        <el-button size="small" type="primary" @click="submitUpload()" :disabled="!isSelected">上传到服务器</el-button>
-      </el-col>
-    </div>
+  <div>
+    <el-card class="box-card" shadow="hover">
+      <el-steps :active="active" finish-status="success" simple>
+        <el-step title="文件信息" icon="el-icon-edit" style="margin-left: 15%"></el-step>
+        <el-step title="文件上传" icon="el-icon-upload" style="margin-right: 15%" :status="step2Status"></el-step>
+      </el-steps>
+      <el-form ref="newsDetail" :model="news" label-width="150px" :rules="rules">
+        <div id="news-form" v-show='step1'>
+          <el-form-item label="新闻标题" prop="title">
+            <el-input v-model="news.title" style="width:80%"></el-input>
+          </el-form-item>
+          <el-form-item label="发表时间" prop="publish_date">
+            <el-date-picker
+              v-model="news.publish_date"
+              type="datetime"
+              placeholder="选择日期时间"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              style="width:80%">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="新闻来源" prop="source">
+            <el-autocomplete
+              v-model="news.source"
+              :fetch-suggestions="querySearch"
+              @select="handleSelect">
+              <template slot-scope="{ item }">
+                <div class="name">{{ item.value }}</div>
+              </template>
+            </el-autocomplete>
+          </el-form-item>
+          <el-form-item label="责任编辑" prop="editor">
+            <el-input v-model="news.editor" style="width:80%"></el-input>
+          </el-form-item>
+          <el-form-item label="内容简述">
+            <el-input type="textarea" v-model="news.desc" :autosize="{ minRows: 3, maxRows: 5}" resize="none" style="width:80%" maxlength="200" show-word-limit></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="next('newsDetail')" style="margin-left: 30%;margin-bottom: 1%;">下一步</el-button>
+          </el-form-item>
+        </div>
+        <div id="news-upload" v-show='step2'>
+          <el-form-item>
+            <el-upload
+              drag
+              ref="upload"
+              :action="uploadUrl()"
+              :file-list="fileList"
+              :multiple="false"
+              :auto-upload="false"
+              :show-file-list="false"
+              :disabled="selected"
+              
+              :before-upload="beforeUpload"
+              :on-change="handleChange"
+              :on-success="uploadedSuccess"
+              :on-error="uploadError"
+              :on-progress="handleProgress"
+              accept=".txt">
+              <div v-if="selected" class="upload-actions">
+                <span @click="handleRemove()">
+                  <i class="el-icon-delete hover-delete"></i>
+                </span>
+              </div>
+              <i v-if="!selected" class="el-icon-upload show-icon"><div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div></i>
+              <i v-else class="el-icon-document show-icon">
+                <div class="el-upload__text" style="margin-top: 10px;">{{this.file.name}}</div>
+              </i>
+              <el-progress v-if="selected" :percentage="percent" :status="uploadStatus"></el-progress>
+              <div class="el-upload__tip upload-tip" slot="tip" >只能上传文本格式的文档.txt文件，且不超过10Mb</div>
+            </el-upload>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="pre" style="margin-left: 1%">上一步</el-button>
+            <el-button type="primary" @click="submitForm" style="margin-left: 30%">提 交</el-button>
+          </el-form-item>
+        </div>
+      </el-form>
+    </el-card>
   </div>
 </template>
 
@@ -38,21 +85,48 @@ export default {
   name: 'fileupload',
   data(){
     return{
+      step1: true,
+      step2: false,
+      active: 0,
+      step2Status: 'wait',
+      medias: [],
+      news: {
+        title: '',
+        publish_date: '',
+        source: '',
+        editor: '',
+        desc: ''
+      },
+      rules: {
+        title: [
+          { required: true, message: '请输入文章标题', trigger: 'blur' },
+        ],
+        publish_date: [
+          { required: true, message: '请选择发表时间', trigger: 'change' }
+        ],
+        source: [
+          { required: true, message: '请选择来源', trigger: 'change' }
+        ],
+        editor: [
+          { required: true, required: true, message: '请输入责任编辑', trigger: 'change' }
+        ]
+      },
+
       file: {},
       fileList: [],
       percent: 0,
       uploadStatus: "",
-      isSelected: false,
+      selected: false,
     }
   },
   methods:{
     handleChange(file, fileList) {
       console.log(file, fileList)
-      this.isSelected = false
+      this.selected = false
       //如果重复上传，选最后上传的文件
       this.fileList = fileList.slice(-1)
       this.file = file
-      this.isSelected = true
+      this.selected = true
     },
     beforeUpload(file){
       console.log(file)
@@ -69,55 +143,177 @@ export default {
       return isTXT && isLt10M
     },
     handleRemove(){
+      this.step2Status = 'process'
       this.$refs.upload.clearFiles()
-      this.isSelected = false
       this.percent = 0
       this.uploadStatus = ""
+      this.selected = false
+      this.step2Status = 'process'
     },
-    //手动文件上传
-    submitUpload() {
+    submitForm(){
+      console.log(this.news)
       this.$refs.upload.submit()
     },
     uploadedSuccess(response, file, fileList){
-      this.$message.success('文件上传成功')
+      // this.active++
+      this.step2Status = 'success'
+      // this.$message.success('文件上传成功')
       this.uploadStatus = 'success'
       console.log(response, file, fileList)
+      //文件上传成功之后调用
+      console.log("odcdcndsncjndsjcnjdsnj")
+      this.axios.get('/file_details', {
+        params: {
+          title: this.news.title,
+          publish_date: this.news.publish_date,
+          source: this.news.source,
+          editor: this.news.editor,
+          desc: this.news.desc,
+          file_name: response.file_name,
+          word_count: response.word_count
+        }
+      }).then((response) => {
+        console.log(response)
+        this.$message.success('文件信息提交成功')
+      }).catch((error) =>{
+        console.log(error);
+        this.$message({
+          showClose: true,
+          message: '文件信息提交出错',
+          type: 'error',
+        })
+      })
     },
     uploadError(err, file, fileList){
-      this.$message.error('文件上传失败')
+      this.$message.error('文件提交失败')
       console.log(err, file, fileList)
     },
     handleProgress(event, file, fileList){
       console.log(event.percent)
-      this.isSelected = true;
-      // this.percent = file.percentage.toFixed(0);
+      this.selected = true;
       //实时显示半分比
       this.percent = Math.floor(event.percent)
+    },
+
+    querySearch(queryString, cb) {
+      var medias = this.medias;
+      var results = queryString ? medias.filter(this.createFilter(queryString)) : medias;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createFilter(queryString) {
+      return (restaurant) => {
+        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
+    loadAll() {
+      return [
+        { "value": "新华网"},
+        { "value": "新京报"},
+        { "value": "澎湃新闻"},
+        { "value": "看看新闻"},
+        { "value": "央视新闻"},
+        { "value": "人民日报"}
+      ];
+    },
+    handleSelect(item) {
+      console.log(item);
+    },
+    next(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          if(this.uploadStatus != 'success'){
+            this.step2Status = 'process'
+          }
+          if(this.active < 1){
+            this.active++
+            this.step1 = false
+            this.step2 = true
+          }
+        } else {
+          return false;
+        }
+      });
+      console.log(this.news)
+    },
+    pre(){
+      if(this.uploadStatus != 'success'){
+        this.step2Status = 'wait'
+      }
+      console.log(this.news)
+      if(this.active>0){
+        this.active--
+        this.step1 = true
+        this.step2 = false
+      }
+    },
+    uploadUrl(){
+      return '/api/file_upload'
     }
+  },
+  mounted() {
+    this.medias = this.loadAll();
   }
 }
 </script>
 
 <style>
-.el-upload{
-  margin-top: 5%;
+.box-card {
+  display: block;
+  margin: 20px;
+  height: 600px;;
+}
+#news-form {
+  width: 60%;
+  margin: 3% 20% 6%;
+}
+.el-autocomplete{
+  width:80%;
+}
+#news-upload {
+  width: 60%;
+  margin: 3% 23% 6%;
 }
 .el-progress{
-  margin-top: 18px;
+  margin-top: 15px;
 }
 .show-icon{
   margin-top: 10px;
-  font-size: 100px;
+  font-size: 95px;
 }
-.el-upload__text{
-  margin-top: 15px;
+.upload-tip{
+  text-align: center;
+  width: 60%;
+  margin: 0px;
+  padding: 0px;
 }
-.el-button{
-  size: small;
+.upload-buttons{
+  margin-top: 10px;
+  width: 50%;
 }
-.buttons{
-  margin-top: 10px; 
-  margin-left: 33.5%;
-  width: 33%;
+.el-upload{
+  position: relative;
+}
+.el-upload :hover .upload-actions{
+  transition: all 1s;
+  opacity: 1;
+}
+.el-upload :hover .el-progress{
+  visibility: hidden;
+}
+.upload-actions{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: white;
+  height: 180px;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+.hover-delete{
+  margin-top: 20%;
+  font-size: 30px;
 }
 </style>
