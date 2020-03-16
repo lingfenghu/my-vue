@@ -10,6 +10,21 @@
           @change="selectDate">
         </el-date-picker>
       </div>
+      <div class="item1">
+        <el-button type="success" plain icon="el-icon-download" @click="dialogVisible = true">导出Excel</el-button>
+        <el-dialog
+          title="提示"
+          :visible.sync="dialogVisible"
+          width="30%"
+          :before-close="handleClose"
+          center>
+          <span style="text-align:center;display:block;">是否确定导出本页日志到Excel文档 ?</span>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="exportExcel()">确 定</el-button>
+          </span>
+        </el-dialog>
+      </div>
     </div>
     <el-table
       :data="tableData"
@@ -65,17 +80,18 @@
       <el-table-column
         prop="status"
         label="Status"
-        :filters="[{ text: '404', value: '404' }, { text: '504', value: '504' }, { text: '200', value: '200' }]"
+        :filters="[{ text: '404', value: '404' }, { text: '504', value: '504' }, { text: '304', value: '304' }, { text: '200', value: '200' }]"
         :filter-method="filterTag"
         filter-placement="bottom-end">
       <template slot-scope="scope">
         <el-tag
-          :type="scope.row.status === '200' ? 'success' : 'warning'"
+          :type="changeColor(scope.row.status)"
           disable-transitions>{{scope.row.status}}</el-tag>
       </template>
       </el-table-column>
     </el-table>
     <el-pagination
+      style="text-align:center;"
       v-if="total!=0"
       background
       :current-page.sync="currentPage"
@@ -95,18 +111,22 @@ export default {
   data(){
     return{
       total: 0,
-      dateValue:'2020-03-06',
+      dateValue:'',
       currentRow: null,
       tableData: [],
       currentPage: 1,
-      pageSize: 10
+      pageSize: 10,
+      dialogVisible: false
     }
   },
   methods:{
     selectDate(){
+      this.currentPage = 1
       this.initTable()
     },
     initTable(){
+      this.tableData = []
+      this.total = 0
       console.log(this.dateValue,this.currentPage,this.pageSize)
       this.axios.get('/query/nginx_log', {
         params: {
@@ -142,8 +162,56 @@ export default {
       console.log(value, row)
       return row.status === value;
     },
+    changeColor(val){
+      console.log(val)
+      if(val === '200'){
+        return 'success'
+      }
+      else if(val === '304'){
+        return 'primary'
+      }
+      else if(val === '504'){
+        return 'danger'
+      }
+      else if(val === '404'){
+        return 'warning'
+      }
+      else{
+        return 'info'
+      }
+    },
+    exportExcel(){
+      console.log("确认操作")
+      this.dialogVisible = false
+      this.axios.get('/nginx_logs_excel', {
+        params: {
+          date: this.dateValue,
+          page_num: this.currentPage, 
+          page_size: this.pageSize
+        }      
+      }).then((response) => {
+        console.log(response)
+        window.open(response.request.responseURL)
+      }).catch((error) =>{
+        console.log(error);
+        this.$message({
+          showClose: true,
+          message: '下载文件出错',
+          type: 'error',
+        })
+      })
+    },
+    handleClose() {
+      this.dialogVisible = false
+      console.log("取消操作")
+    }
   },
   mounted: function () {
+    //默认选中今天，打印改天日志
+    console.log(new Date().toLocaleDateString())
+    var now = new Date()
+    this.dateValue = now.getFullYear()+'-'+(now.getMonth()+1)+'-'+now.getDate()
+    console.log(this.dateValue)
     this.$nextTick(function () {
         this.initTable()
     })

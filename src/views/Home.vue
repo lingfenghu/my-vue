@@ -7,19 +7,27 @@
 <script>
 export default {
   name: 'home',
-  data(){
-    return{
-     
+ data() {
+      return {
+        dialogImageUrl: '',
+        dialogVisible: false
+      };
+    },
+    methods: {
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      handlePictureCardPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+      }
     }
-  },
-  methods:{
-    
-  }
 }
 </script>
 
 <style>
 h3{
   margin-top: 10%;
+  text-align: center;
 }
 </style>

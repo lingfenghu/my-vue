@@ -15,10 +15,14 @@
               <el-menu-item index="1-1"><i class="el-icon-upload2"></i>文档上传</el-menu-item>
               <el-menu-item index="1-2"><i class="el-icon-download"></i>文档获取</el-menu-item>
             </el-submenu>
-            <el-menu-item index="2">
-              <i class="el-icon-s-data"></i>
-              <span slot="title">日志管理</span>
-            </el-menu-item>
+            <el-submenu index="2">
+              <template slot="title">
+                <i class="el-icon-s-tools"></i>
+                <span>日志管理</span>
+              </template>
+              <el-menu-item index="2-1"><i class="el-icon-data-analysis"></i>日志分析</el-menu-item>
+              <!-- <el-menu-item index="2-2"><i class="el-icon-document-delete"></i>索引管理</el-menu-item> -->
+            </el-submenu>
           </el-menu>
         </el-aside>
         <el-container>
@@ -70,9 +74,20 @@ export default {
             ]
           },
           {
-            name: 'logsanalyze',
             text: '日志管理',
-            index: '2'
+            index: '2',
+            children:[
+              {
+                name: 'logsanalyze',
+                text: '日志分析',
+                index: '2-1'
+              },
+              // {
+              //   name: 'logsdelete',
+              //   text: '索引管理',
+              //   index: '2-2'
+              // }
+            ]
           }
         ],
       }
@@ -170,7 +185,6 @@ export default {
     margin: 0px;
     background-color: rgb(240, 240, 240);
     color: black;
-    text-align: center;
     height: 690px;
   }
   .el-breadcrumb{

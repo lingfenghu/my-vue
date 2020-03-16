@@ -48,6 +48,11 @@ export default new Router({
           path: '/logsanalyze',
           name: 'logsanalyze',
           component: () => import('../views/LogsAnalyze.vue'),
+        },
+        {
+          path: '/logsdelete',
+          name: 'logsdelete',
+          component: () => import('../views/LogsDelete.vue'),
         }
       ]
     }

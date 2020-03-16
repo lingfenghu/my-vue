@@ -9,20 +9,6 @@
         <div class="arguments">
           <el-form ref="form" :model="form">
             <el-form-item>
-              <p style="text-align:left;">类型:</p>
-              <el-select v-model="form.type" 
-                placeholder="请选择"
-                style="width:450px"
-                disabled>
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
               <p style="text-align:left;">日期:</p>
               <el-date-picker
                 style="width:95%;"
@@ -51,7 +37,7 @@
       </el-aside>
       <el-container>
         <el-header class="page-header">
-          <el-input placeholder="请输入新闻标题、作者或内容" v-model="searchContent" @keyup.enter.native="globalSearch">
+          <el-input class="global-search" placeholder="请输入新闻标题、来源或简介内容" v-model="searchContent" @keyup.enter.native="globalSearch">
             <el-button slot="append" icon="el-icon-search" @click="globalSearch">搜索</el-button>
           </el-input>
         </el-header>
@@ -61,12 +47,14 @@
               <el-card>
                   <i class="el-icon-document document-icon" style="font-size:120px;"></i>
                   <div class="bottom">
-                    <el-button type="text" @click="download(item.file_name)">{{item.file_name}} &nbsp; <i class="el-icon-download"></i></el-button>
+                    <el-button type="text" @click="download(item.file_name)">{{item.file_name}}&nbsp;<i class="el-icon-download"></i></el-button>
                   </div>
                   <div class="tip">
-                    <p>标题：{{item.title}}</p>
+                    <p style="margin-bottom:1%;">标题：{{item.title}}</p>
                     <el-divider></el-divider>
-                    <p>作者：{{item.author}}</p>
+                    <p style="margin-bottom:1%;">来源：{{item.source}}</p>
+                    <el-divider></el-divider>
+                    <p style="margin-bottom:1%;">简介：{{item.desc}}</p>
                     <el-divider></el-divider>
                     <p>发表日期：{{item.publish_date}}</p>
                   </div>
@@ -74,7 +62,7 @@
             </el-col>
           </el-row>
           <el-pagination
-            style="margin-bottom: 30px;"
+            style="margin-bottom: 30px;text-align:center;"
             v-if="total!=0" 
             @current-change="handleCurrentChange"
             :current-page.sync="currentPage"
@@ -82,7 +70,6 @@
             layout="total, prev, pager, next, jumper"
             :total="total">
           </el-pagination>
-          <div class="foot"></div>
         </el-main>
       </el-container>
     </el-container>
@@ -113,6 +100,7 @@ export default {
   methods: {
     globalSearch(){
       this.loading = true
+      this.currentPage = 1
       console.log(this.fileList,this.dateRange)
       this.axios.get('/query/global/document', {
         params: {
@@ -132,7 +120,6 @@ export default {
       this.loading = true
       this.axios.get('/query/document', {
         params: {
-          type: this.form.type,
           page_num: this.currentPage,
           gt_publish_date: this.form.dateRange[0],
           lt_publish_date: this.form.dateRange[1],
@@ -166,7 +153,7 @@ export default {
           showClose: true,
           message: '下载文件出错',
           type: 'error',
-        });
+        })
       })
     }
   },
@@ -184,12 +171,13 @@ export default {
   overflow: hidden;
 }
 .page-header{
+  text-align: center;
   background-color: white
 }
 .page-main{
   height: 600px;;
 }
-.el-input{
+.global-search{
   width: 60%
 }
 .el-row{
@@ -210,21 +198,26 @@ export default {
 }
 .bottom{
   position: absolute;
-  width: 100%;
   display: inline;
   left: 5px;
-  top: 175px;;
-
+  top: 175px;
 }
 .el-col .el-card :hover .tip{
   /* 动画效果 */
   /* transform: scale(1.15);
-  transform: translateY(-5px); */
+  transform: translateY(-15px); */
+  /* 遮罩层 */
   transition: all 1s;
   opacity: 1;
 }
 .tip p{
   text-align: left;
+  /* 设置文字超出两行省略表示 */
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 }
 .slogan{
   line-height: 60px;
@@ -232,18 +225,12 @@ export default {
   background-color: white
 }
 .arguments{
-  line-height: 80px;
+  line-height: 100px;
   margin: 10px;
   width: 90%;
 }
 .el-divider{
   margin: 0px;
-}
-.el-pagination{
-  /* position: absolute; */
-  /* bottom: 30px; */
-  /* left: 35%; */
-  
 }
 .tip{
   /* 层叠样式关键,子级absolute */
@@ -255,9 +242,7 @@ export default {
   color: white;
   height: 180px;
   opacity: 0;
-  background: rgba(0, 0, 0, 0.6);   /*后面这个0.6是指的背景的透明度*/
-}
-.foot{
-  height: 10px;
+   /*后面这个0.6是指的背景的透明度*/
+  background: rgba(0, 0, 0, 0.6);  
 }
 </style>
