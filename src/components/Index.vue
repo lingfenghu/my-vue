@@ -14,6 +14,7 @@
               </template>
               <el-menu-item index="1-1"><i class="el-icon-upload2"></i>文档上传</el-menu-item>
               <el-menu-item index="1-2"><i class="el-icon-download"></i>文档获取</el-menu-item>
+              <el-menu-item index="1-3"><i class="el-icon-receiving"></i>新闻获取</el-menu-item>
             </el-submenu>
             <el-submenu index="2">
               <template slot="title">
@@ -23,6 +24,7 @@
               <el-menu-item index="2-1"><i class="el-icon-data-analysis"></i>日志分析</el-menu-item>
               <!-- <el-menu-item index="2-2"><i class="el-icon-document-delete"></i>索引管理</el-menu-item> -->
             </el-submenu>
+          
           </el-menu>
         </el-aside>
         <el-container>
@@ -70,6 +72,11 @@ export default {
                 name: 'filedownload',
                 text: '文档下载',
                 index: '1-2'
+              },
+              {
+                name: 'fetchnews',
+                text: '新闻获取',
+                index: '1-3'
               }
             ]
           },

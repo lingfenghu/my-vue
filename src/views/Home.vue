@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Welcome to my ElasticSearch File-Manage-System</h3>
+    <h3>Welcome to My File-ElasticSearch-Manage-System</h3>
   </div>
 </template>
 

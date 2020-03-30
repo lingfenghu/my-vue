@@ -11,6 +11,7 @@
             <el-form-item>
               <p style="text-align:left;">日期:</p>
               <el-date-picker
+                :clearable="false"
                 style="width:95%;"
                 v-model="form.dateRange"
                 type="daterange"
@@ -42,14 +43,39 @@
           </el-input>
         </el-header>
         <el-main class="page-main" v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.2)">
+          <div class="file-detail" :hidden="visible" @click="closeDetails">
+            <el-button type="text" class="close-details"><i class="el-icon-close" style="font-size:30px;" @click="closeDetails"></i></el-button>
+            <div class="box-intro">
+              <p class="title">Title: {{title}}</p>
+              <p class="intro">Tags: <span v-for="featureWord in featureWords" class="tag">{{featureWord}}</span></p>
+              <p class="intro">Source: {{source}}</p>
+              <p class="intro">Desc: {{desc}} ...</p>
+              <p class="intro">PublishDate: {{publishdate}}</p>
+              <p class="intro">Editor: {{editor}}</p>
+              <p class="intro">WordCount: {{wordCount}} 字</p>
+            </div>
+
+            <!-- <p style="margin-bottom:1%;">标题：{{item.title}}</p>
+            <el-divider></el-divider>
+            <p style="margin-bottom:1%;">来源：{{item.source}}</p>
+            <el-divider></el-divider>
+            <p style="margin-bottom:1%;">简介：{{item.desc}}</p>
+            <el-divider></el-divider>
+            <p>发表日期：{{item.publish_date}}</p> -->
+          </div>
           <el-row>
-            <el-col :span="4" v-for="(item, index) in fileList" :offset="index%5 > 0 ? 1 : 0">
+            <el-col :span="4" v-for="(item, index) in fileList" :offset="index%5 > 0 ? 1 : 0">      
               <el-card>
+                <el-button class="file-card" type="text" @click="viewDetails(item)">
                   <i class="el-icon-document document-icon" style="font-size:120px;"></i>
-                  <div class="bottom">
+                </el-button>
+                <div class="bottom">
+                  <el-tooltip class="item" effect="light" :content='item.file_name' placement="left">
                     <el-button type="text" @click="download(item.file_name)">{{item.file_name}}&nbsp;<i class="el-icon-download"></i></el-button>
-                  </div>
-                  <div class="tip">
+                  </el-tooltip>
+                </div>
+                  
+                  <!-- <div class="tip">
                     <p style="margin-bottom:1%;">标题：{{item.title}}</p>
                     <el-divider></el-divider>
                     <p style="margin-bottom:1%;">来源：{{item.source}}</p>
@@ -57,12 +83,12 @@
                     <p style="margin-bottom:1%;">简介：{{item.desc}}</p>
                     <el-divider></el-divider>
                     <p>发表日期：{{item.publish_date}}</p>
-                  </div>
+                  </div> -->
               </el-card>
             </el-col>
           </el-row>
           <el-pagination
-            style="margin-bottom: 30px;text-align:center;"
+            style="margin-bottom: 10px;text-align:center;"
             v-if="total!=0" 
             @current-change="handleCurrentChange"
             :current-page.sync="currentPage"
@@ -73,6 +99,7 @@
         </el-main>
       </el-container>
     </el-container>
+    
   </div>
 </template>
 
@@ -91,10 +118,19 @@ export default {
       }],
       form: {
         type: 'news',
-        dateRange: ['2000-01-01','2020-12-30'],
+        dateRange: ['2020-01-01','2020-12-30'],
         wordValue: [1, 5000]
       },
-      loading: true
+      loading: true,
+      visible: true,
+
+      title: '',
+      featureWords: [],
+      source: '',
+      desc: '',
+      publishdate: '',
+      editor: '',
+      wordCount: ''
     }
   },
   methods: {
@@ -155,6 +191,23 @@ export default {
           type: 'error',
         })
       })
+    },
+    viewDetails(val){
+      this.visible = false
+      console.log(val)
+      this.title = val.title
+      this.source = val.source
+      // console.log(val.feature_words.split(" "));
+      this.featureWords = val.feature_words.split(" ")
+      this.desc = val.desc
+      this.publishdate = val.publish_date
+      this.editor = val.editor
+      this.wordCount = val.word_count
+
+    },
+    closeDetails(){
+      this.visible = true
+      console.log("close")
     }
   },
   mounted: function () {
@@ -175,6 +228,7 @@ export default {
   background-color: white
 }
 .page-main{
+  position: relative;
   height: 600px;;
 }
 .global-search{
@@ -187,7 +241,7 @@ export default {
 .el-row .el-col .el-card{
   /* 层叠样式关键,父级relative */
   position: relative;
-  margin: 5% 3%;
+  margin: 5% 1%;
   height: 210px;
   padding: 0px;
 
@@ -232,6 +286,11 @@ export default {
 .el-divider{
   margin: 0px;
 }
+.file-card{
+  margin: 0px;
+  padding: 0px;
+  border: none;
+}
 .tip{
   /* 层叠样式关键,子级absolute */
   position: absolute;
@@ -244,5 +303,39 @@ export default {
   opacity: 0;
    /*后面这个0.6是指的背景的透明度*/
   background: rgba(0, 0, 0, 0.6);  
+}
+.file-detail{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 600px;
+  z-index: 99;
+  background: rgba(130, 197, 236, 0.7);
+}
+.close-details{
+  color: rgb(8, 133, 235);
+  padding: 1%;
+}
+.box-intro{
+  margin-left: 10%;
+  margin-right: 5%;
+}
+.box-intro .title{
+  font-size: 20px;
+}
+.box-intro .intro{  
+  margin-top: 1%;
+}
+.tag{
+  /* p站预览图标签样式 */
+  display: inline-block;
+  margin: 2px 5px;
+  padding: 6px 6px;
+  color: #FFF;
+  background-color: rgba(0, 0, 0, 0.65);
+  border-radius: 10px;
 }
 </style>

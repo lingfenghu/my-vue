@@ -27,6 +27,7 @@
       </div>
     </div>
     <el-table
+      class="log-table"
       :data="tableData"
       border
       stripe
@@ -138,6 +139,13 @@ export default {
         console.log(response)
         this.tableData = response.data.list
         this.total = response.data.total
+      }).catch((error)=>{
+        console.log(error);
+        this.$message({
+          showClose: true,
+          message: '获取日志出错',
+          type: 'error',
+        })
       })
     },
     handleCurrentRowChange(val){
@@ -196,7 +204,7 @@ export default {
         console.log(error);
         this.$message({
           showClose: true,
-          message: '下载文件出错',
+          message: '导出Excel失败',
           type: 'error',
         })
       })
@@ -235,7 +243,7 @@ export default {
   margin-left: 20px;;
   display:inline-block;
 }
-.el-table{
+.log-table{
   /* padding: 1%; */
   margin: 1% 1%;
   background-color: white;

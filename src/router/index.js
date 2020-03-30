@@ -8,6 +8,9 @@ export default new Router({
   mode: 'history',//去除路径/#！/
   routes: [
     {
+      path: '/', redirect: '/home'
+    },
+    {
       path: '/index',
       name: 'index',
       component: () => import('../components/Index.vue'),
@@ -33,11 +36,13 @@ export default new Router({
           path: '/filedownload',
           name: 'filedownload',
           component: () => import('../views/FileDownload.vue')
+        },
+        {
+          path: '/fetchnews',
+          name: 'fetchnews',
+          component: () => import('../views/FetchNews.vue')
         }
       ]
-    },
-    {
-      path: '/', redirect: '/index'
     },
     {
       path: '/index',
