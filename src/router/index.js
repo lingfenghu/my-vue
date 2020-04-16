@@ -55,9 +55,9 @@ export default new Router({
           component: () => import('../views/LogsAnalyze.vue'),
         },
         {
-          path: '/logsdelete',
-          name: 'logsdelete',
-          component: () => import('../views/LogsDelete.vue'),
+          path: '/indexmanage',
+          name: 'indexmanage',
+          component: () => import('../views/IndexManage.vue'),
         }
       ]
     }

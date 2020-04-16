@@ -161,7 +161,6 @@ export default {
       this.uploadStatus = 'success'
       console.log(response, file, fileList)
       //文件上传成功之后调用
-      console.log("odcdcndsncjndsjcnjdsnj")
       this.axios.get('/file_details', {
         params: {
           title: this.news.title,
@@ -170,22 +169,23 @@ export default {
           editor: this.news.editor,
           desc: this.news.desc,
           file_name: response.file_name,
-          word_count: response.word_count
+          word_count: response.word_count,
+          feature_words: response.feature_words
         }
       }).then((response) => {
         console.log(response)
-        this.$message.success('文件信息提交成功')
+        this.$message.success('提交成功')
       }).catch((error) =>{
         console.log(error);
         this.$message({
           showClose: true,
-          message: '文件信息提交出错',
+          message: '信息错误',
           type: 'error',
         })
       })
     },
     uploadError(err, file, fileList){
-      this.$message.error('文件提交失败')
+      this.$message.error('提交失败')
       console.log(err, file, fileList)
     },
     handleProgress(event, file, fileList){

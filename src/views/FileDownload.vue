@@ -3,7 +3,7 @@
     <el-container style="border: 1px solid #eee">
       <el-aside width="300px" class="page-aside">
         <div class="slogan">
-          <span>详细信息</span>
+          <span>文档范围信息</span>
         </div>
         <el-divider></el-divider>
         <div class="arguments">
@@ -38,7 +38,7 @@
       </el-aside>
       <el-container>
         <el-header class="page-header">
-          <el-input class="global-search" placeholder="请输入新闻标题、来源或简介内容" v-model="searchContent" @keyup.enter.native="globalSearch">
+          <el-input class="global-search" placeholder="请输入新闻标题、标签、来源或简介内容" v-model="searchContent" @keyup.enter.native="globalSearch">
             <el-button slot="append" icon="el-icon-search" @click="globalSearch">搜索</el-button>
           </el-input>
         </el-header>
@@ -314,6 +314,13 @@ export default {
   height: 600px;
   z-index: 99;
   background: rgba(130, 197, 236, 0.7);
+  /* 动画效果 */
+  animation: my-switch 1s;
+}
+@keyframes my-switch
+{
+  from {background:none}
+  to {background:rgba(130, 197, 236, 0.7);}
 }
 .close-details{
   color: rgb(8, 133, 235);

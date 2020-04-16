@@ -57,7 +57,6 @@ export default {
           tmp.url = item;
           this.tableData.push(tmp);
         });
-        this.loading = false
         console.log(this.tableData)
         //解析新闻到es
         this.axios.get('/fetch_news')
@@ -77,10 +76,17 @@ export default {
             duration: 0,
             // offset: 50
           });
+          this.loading = false
         }).catch(error => {
-          this.$message.error('连接elasticsearch出错')
+          this.loading = false
+          this.$message.error('解析出错')
         })
+        this.loading = false
+      }).catch(error =>{
+        this.loading = false
+        this.$message.error('操作失败')
       })
+      
     }
   },
   mounted: function () {

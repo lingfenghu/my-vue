@@ -143,7 +143,7 @@ export default {
         console.log(error);
         this.$message({
           showClose: true,
-          message: '获取日志出错',
+          message: '获取失败',
           type: 'error',
         })
       })
@@ -158,6 +158,7 @@ export default {
     //分页事件
     handleSizeChange(val){
       console.log(val)
+      this.currentPage = 1
       this.pageSize = val
       this.initTable()
     },

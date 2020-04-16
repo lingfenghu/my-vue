@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'logsdelete',
+  name: 'indexmanage',
   data(){
     return{
     }
