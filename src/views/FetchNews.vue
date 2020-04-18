@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card class="box-card">
+    <el-card class="box-card" shadow="hover">
       <el-button :loading="loading" type="primary" @click="getNewsUrl()">获取热点新闻</el-button>
       <el-input class="news-url" v-model="url" disabled></el-input>
       <div>
@@ -10,7 +10,7 @@
         stripe
         border
         lazy
-        height="520">
+        height="500">
           <el-table-column
             label="序号"
             type="index"
@@ -97,19 +97,18 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .box-card {
   display: block;
   margin: 20px;
   height: 600px;
-  padding: 15px;
 }
 .news-url{
   width: 35%;
   margin-left: 10px;
 }
 .url-table{
-  margin-top: 15px;
+  margin: 10px 0px 10px;
   text-align: center;
 }
 </style>

@@ -172,29 +172,29 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .el-header{
-    background-color: rgb(100, 180, 250);
-    color: black;
-    line-height: 50px;
-  }
-  .el-aside {
-    background-color: rgb(100, 180, 250);
-    /* color: rgb(117, 114, 114); */
-    text-align: center;
-    line-height:700px;
-  }
-  .el-menu{
-    color: rgb(117, 114, 114);
-  }
-  .el-main {
-    padding: 0px;
-    margin: 0px;
-    background-color: rgb(240, 240, 240);
-    color: black;
-    height: 690px;
-  }
-  .el-breadcrumb{
-    margin-top: 20px;
-  }
+  background-color: rgb(100, 180, 250);
+  color: black;
+  line-height: 50px;
+}
+.el-aside {
+  background-color: rgb(100, 180, 250);
+  /* color: rgb(117, 114, 114); */
+  text-align: center;
+  line-height:700px;
+}
+.el-menu{
+  color: rgb(117, 114, 114);
+}
+.el-main {
+  padding: 0px;
+  margin: 0px;
+  background-color: rgb(240, 240, 240);
+  color: black;
+  height: 690px;
+}
+.el-breadcrumb{
+  margin-top: 20px;
+}
 </style>

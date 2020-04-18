@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="log-time">
-      <div class="item1">
+    <div class="header">
+      <div class="item">
         <el-date-picker
           v-model="dateValue"
           type="date"
@@ -10,12 +10,11 @@
           @change="selectDate">
         </el-date-picker>
       </div>
-      <div class="item1">
+      <div class="item">
         <el-button type="success" plain icon="el-icon-download" @click="dialogVisible = true">导出Excel</el-button>
         <el-dialog
           title="提示"
           :visible.sync="dialogVisible"
-          width="30%"
           :before-close="handleClose"
           center>
           <span style="text-align:center;display:block;">是否确定导出本页日志到Excel文档 ?</span>
@@ -26,83 +25,84 @@
         </el-dialog>
       </div>
     </div>
-    <el-table
-      class="log-table"
-      :data="tableData"
-      border
-      stripe
-      highlight-current-row
-      @current-change="handleCurrentRowChange"
-      header-cell-style="text-align:center"
-      height="520">
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="request"
-        label="Request">
-      </el-table-column>
-      <el-table-column
-        prop="remote_addr"
-        label="RemoteAddr">
-      </el-table-column>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="time_local"
-        label="TimeLocal">
-      </el-table-column>
-      <el-table-column
-        prop="bytes_sent"
-        label="BytesSent">
-      </el-table-column>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="http_user_agent"
-        label="HttpUserAgent">
-      </el-table-column>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="remote_user"
-        label="RemoteUser">
-      </el-table-column>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="path"
-        label="Path">
-      </el-table-column>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="http_referer"
-        label="HttpReferer">
-      </el-table-column>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="host"
-        label="Host">
-      </el-table-column>
-      <el-table-column
-        prop="status"
-        label="Status"
-        :filters="[{ text: '404', value: '404' }, { text: '504', value: '504' }, { text: '304', value: '304' }, { text: '200', value: '200' }]"
-        :filter-method="filterTag"
-        filter-placement="bottom-end">
-      <template slot-scope="scope">
-        <el-tag
-          :type="changeColor(scope.row.status)"
-          disable-transitions>{{scope.row.status}}</el-tag>
-      </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination
-      style="text-align:center;"
-      v-if="total!=0"
-      background
-      :current-page.sync="currentPage"
-      :page-sizes="[10, 50, 100, 500]"
-      :page-size="pageSize"
-      layout="total, sizes, prev, pager, next"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :total="total">
-    </el-pagination>
+    <div class="data-table">
+      <el-table
+        :data="tableData"
+        border
+        stripe
+        highlight-current-row
+        @current-change="handleCurrentRowChange"
+        header-cell-style="text-align:center"
+        height="500">
+        <el-table-column
+          :show-overflow-tooltip="true"
+          prop="request"
+          label="Request">
+        </el-table-column>
+        <el-table-column
+          prop="remote_addr"
+          label="RemoteAddr">
+        </el-table-column>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          prop="time_local"
+          label="TimeLocal">
+        </el-table-column>
+        <el-table-column
+          prop="bytes_sent"
+          label="BytesSent">
+        </el-table-column>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          prop="http_user_agent"
+          label="UserAgent">
+        </el-table-column>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          prop="remote_user"
+          label="RemoteUser">
+        </el-table-column>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          prop="path"
+          label="Path">
+        </el-table-column>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          prop="http_referer"
+          label="HttpReferer">
+        </el-table-column>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          prop="host"
+          label="Host">
+        </el-table-column>
+        <el-table-column
+          prop="status"
+          label="Status"
+          :filters="[{ text: '404', value: '404' }, { text: '504', value: '504' }, { text: '304', value: '304' }, { text: '200', value: '200' }]"
+          :filter-method="filterTag"
+          filter-placement="bottom-end">
+        <template slot-scope="scope">
+          <el-tag
+            :type="changeColor(scope.row.status)"
+            disable-transitions>{{scope.row.status}}</el-tag>
+        </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        style="text-align:center;margin-top:12px;"
+        v-if="total!=0"
+        background
+        :current-page.sync="currentPage"
+        :page-sizes="[10, 50, 100, 500]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :total="total">
+      </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -228,26 +228,22 @@ export default {
 }
 </script>
 
-<style>
-.log-time{
+<style scoped>
+.header{
   padding: 1%;
-  margin: 1% 1% 0%;
+  margin: 20px 20px 0px;
   background-color: white;
   height: 40px;
 }
-.item1{
-  float: left;
-  width: 20%;
+.item{
+  display: inline;
 }
 .search-button{
-  float: left;
   margin-left: 20px;;
   display:inline-block;
 }
-.log-table{
-  /* padding: 1%; */
-  margin: 1% 1%;
-  background-color: white;
-  width: 98%;
+.data-table{
+  height: 520px;
+  margin: 10px 20px 10px;
 }
 </style>

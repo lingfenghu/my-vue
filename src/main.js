@@ -15,7 +15,10 @@ Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
 
 // 设置基础URL
-axios.defaults.baseURL = '/api'
+// axios.defaults.baseURL = '/api'
+//buid后的prod环境
+axios.defaults.baseURL = '/es'
+
 // 设置请求超时时间 3s
 //axios.defaults.timeout = 3000
 // 设置axios请求头

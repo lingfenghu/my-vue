@@ -62,7 +62,7 @@
                   <i class="el-icon-delete hover-delete"></i>
                 </span>
               </div>
-              <i v-if="!selected" class="el-icon-upload show-icon"><div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div></i>
+              <i v-if="!selected" class="el-icon-upload show-icon" style="margin-top:45px;"><div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div></i>
               <i v-else class="el-icon-document show-icon">
                 <div class="el-upload__text" style="margin-top: 10px;">{{this.file.name}}</div>
               </i>
@@ -72,7 +72,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="pre" style="margin-left: 1%">上一步</el-button>
-            <el-button type="primary" @click="submitForm" style="margin-left: 30%">提 交</el-button>
+            <el-button type="primary" @click="submitForm" style="margin-left: 31%">提 交</el-button>
           </el-form-item>
         </div>
       </el-form>
@@ -248,7 +248,7 @@ export default {
       }
     },
     uploadUrl(){
-      return '/api/file_upload'
+      return 'http://localhost:8080/es/file_upload'
     }
   },
   mounted() {
@@ -257,7 +257,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .box-card {
   display: block;
   margin: 20px;
@@ -275,11 +275,11 @@ export default {
   margin: 3% 23% 6%;
 }
 .el-progress{
-  margin-top: 15px;
+  /* margin-top: 15px; */
 }
 .show-icon{
-  margin-top: 10px;
-  font-size: 95px;
+  margin-top: 20px;
+  font-size: 100px;
 }
 .upload-tip{
   text-align: center;

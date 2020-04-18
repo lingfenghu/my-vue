@@ -6,9 +6,14 @@ Vue.use(Router)
 
 export default new Router({
   mode: 'history',//去除路径/#！/
+  base: '/dist/',
   routes: [
     {
       path: '/', redirect: '/home'
+    },
+    { 
+      path: '*', 
+      component: () => import('../components/NotFound.vue'),
     },
     {
       path: '/index',

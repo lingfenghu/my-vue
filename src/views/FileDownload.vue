@@ -28,10 +28,14 @@
                 v-model="form.wordValue"
                 range
                 show-stops
-                :min="1"
-                :max="5000"
+                :min='0'
+                :max= parseInt(maxWords)
                 @change="detailQuery()">
               </el-slider>
+              <div class="slider">
+                <el-input size="mini" value="0" readonly></el-input>
+                <el-input size="mini" min='1000' v-model="maxWords" type="number" step="1000" style="float:right;"></el-input>
+              </div>
             </el-form-item>
           </el-form>
         </div>
@@ -65,7 +69,7 @@
           </div>
           <el-row>
             <el-col :span="4" v-for="(item, index) in fileList" :offset="index%5 > 0 ? 1 : 0">      
-              <el-card>
+              <el-card shadow="hover">
                 <el-button class="file-card" type="text" @click="viewDetails(item)">
                   <i class="el-icon-document document-icon" style="font-size:120px;"></i>
                 </el-button>
@@ -109,6 +113,7 @@ export default {
   data(){
     return {
       total: 0,
+      maxWords: 5000,
       searchContent: '',
       currentPage: 1,
       fileList: [],
@@ -187,7 +192,7 @@ export default {
         console.log(error);
         this.$message({
           showClose: true,
-          message: '下载文件出错',
+          message: '下载出错',
           type: 'error',
         })
       })
@@ -218,7 +223,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .page-aside{
   background-color: white;
   overflow: hidden;
@@ -229,13 +234,14 @@ export default {
 }
 .page-main{
   position: relative;
-  height: 600px;;
+  height: 600px;
 }
 .global-search{
-  width: 60%
+  margin-top: 10px;
+  width: 60%;
 }
 .el-row{
-  height: 500px;;
+  height: 500px;
   padding: 2%;
 }
 .el-row .el-col .el-card{
@@ -274,6 +280,7 @@ export default {
   -webkit-box-orient: vertical;
 }
 .slogan{
+  text-align: center;
   line-height: 60px;
   /* background-color: rgb(222, 227, 231); */
   background-color: white
@@ -344,5 +351,16 @@ export default {
   color: #FFF;
   background-color: rgba(0, 0, 0, 0.65);
   border-radius: 10px;
+}
+.slider{
+  display: inline;
+  margin: 0px;
+  padding: 0px;
+}
+.slider .el-input{
+  text-align: center;
+  margin: 0px;
+  padding: 0px;
+  width: 70px;
 }
 </style>
