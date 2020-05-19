@@ -14,6 +14,7 @@ module.exports = {
     proxyTable: {
       '/api': {
         target: 'http://localhost:8080/es',
+        // target: 'http://localhost:8080',
         changeOrigin: true,
         //将以api开头的请求api替换为空
         pathRewrite: {

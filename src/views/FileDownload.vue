@@ -19,7 +19,7 @@
                 range-separator="至"
                 start-placeholder="开始"
                 end-placeholder="截至"
-                @change="detailQuery()">
+                @change="rangeSearch()">
               </el-date-picker>
             </el-form-item>
             <el-form-item>
@@ -30,7 +30,7 @@
                 show-stops
                 :min='0'
                 :max= parseInt(maxWords)
-                @change="detailQuery()">
+                @change="rangeSearch()">
               </el-slider>
               <div class="slider">
                 <el-input size="mini" value="0" readonly></el-input>
@@ -43,7 +43,7 @@
       <el-container>
         <el-header class="page-header">
           <el-input class="global-search" placeholder="请输入新闻标题、标签、来源或简介内容" v-model="searchContent" @keyup.enter.native="globalSearch">
-            <el-button slot="append" icon="el-icon-search" @click="globalSearch">搜索</el-button>
+            <el-button slot="append" icon="el-icon-search" @click="contentSearch">搜索</el-button>
           </el-input>
         </el-header>
         <el-main class="page-main" v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.2)">
@@ -128,6 +128,7 @@ export default {
       },
       loading: true,
       visible: true,
+      isGlobalSearch: false,
 
       title: '',
       featureWords: [],
@@ -140,8 +141,8 @@ export default {
   },
   methods: {
     globalSearch(){
+      this.isGlobalSearch = true
       this.loading = true
-      this.currentPage = 1
       console.log(this.fileList,this.dateRange)
       this.axios.get('/query/global/document', {
         params: {
@@ -157,6 +158,7 @@ export default {
       })
     },
     detailQuery(){
+      this.isGlobalSearch = false
       console.log(this.form)
       this.loading = true
       this.axios.get('/query/document', {
@@ -176,7 +178,11 @@ export default {
     },
     handleCurrentChange(val){
       console.log(val)
-      this.detailQuery()
+      if(this.isGlobalSearch){
+        this.globalSearch()
+      }else{
+        this.detailQuery()
+      }
     },
     download(fileName){
       console.log(fileName)
@@ -213,6 +219,14 @@ export default {
     closeDetails(){
       this.visible = true
       console.log("close")
+    },
+    rangeSearch(){
+      this.currentPage = 1
+      this.detailQuery()
+    },
+    contentSearch(){
+      this.currentPage = 1
+      this.globalSearch()
     }
   },
   mounted: function () {
